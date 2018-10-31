@@ -1,0 +1,136 @@
+\subsection{Significance of This Proposed Project: NSF Merit Criteria}
+\label{significance-section}
+
+The results of this project will advance the state-of-the-art
+knowledge and understanding in API usability and maintenance. They are
+transformative and directly improve software productivity and quality.
+
+\noindent
+{\bf Technical Merits} are addressed throughout this proposal are as
+follows:
+
+\begin{itemize}
+
+  \item {\bf Advance the state-of-the-art research, knowledge and
+    understanding}. Via our empirical studies in {\em Task 1}, the
+    results of this research will advance the state-of-the-art
+    knowledge on the nature and characteristics of {\em the
+      correspodence beteween texts and code} and how they help in
+    automatic API code generation.
+%
+{\em Our research tasks 2 and 3} will fundamentally advance the body
+of knowledge and understanding in theoretical foundations, and
+practical techniques in graph-based statistical translation models and
+tools to support API code generation to assist developers in
+programming.
+
+%support developers in programming and use more effective APIs.
+
+
+  \item {\bf Scientific foundation and creative/original
+    elements}. This project will provide a scientific foundation
+    (novel concepts, representation, theories, algorithms, techniques,
+    and tools) to (1) mine large-scale data to build parallel corpus
+    of texts and code; (2) to advance statistical translation with
+    graph synthesis, which is novel to support source code than
+    state-of-the-art translation models in NLP; (3) to
+    advance the techniques in dealing with incomplete code in
+    discussion forums (e.g. StackOverflow).
+
+%for capturing the knowledge on API usages and miuses and API-related
+%vulnerabilities, and leverage them to guide the patching process and
+%suggesting fixes on other related systems. We will explore approaches
+%to characterize, represent, and recognize API misuses and their
+%relations to security vulnerabilities.
+
+%Tien
+
+To achieve our goal, we must overcome several key challenges. For task
+1 of building a large-scale parrallel corpus, we must find an
+automatic method to mine such a large-scale dataset with little effort
+from human in manual annotation of corresponding texts and API usages.
+Moreover, to mine online resources (e.g., StackOverflow) and
+open-source projects, we must handle the missing information in
+incomplete code, e.g., the information on the fully qualified names of
+APIs and libraries is often implicit and missing. For task 2, we need
+(1) an effective representation for API usage code and corresponding
+statistical translation models suitable for program semantics; (2) to
+make use of large amounts of data; (3) to flexibly support
+several languages for any application domains; (4) to effectively
+represent program properties in any domain. For task 3, the usability
+for our approaches relies on how we present the resulting API usages
+to developers in different enviroments. We plan to conduct user
+studies to evaluate our tools' performance and usability. Other
+challenges will be presented later.
+
+%to create API-Misuse Classification and a taxonomy for API misuses,
+%and a framework to assess the capabilities of detectors, we have to
+%face the challenges in {\em large-scale code mining} because if
+%lacking of examples, we would not be able to observe sufficiently
+%large data to classify them into categories of API misuses causing
+%security vulnerabilities. Fortunately, we have been using our
+%large-scale mining infrastructure, Boa~\cite{boa-icse13} to cover the
+%large space of API~misuses.
+
+%
+%For task 2, a benchmark engine to store and run the API-misuse
+%detectors in a scalable manner for a large number of misuses requires
+%an effective and efficient infrastructure. None of dataset or
+%benchmark of API misuses and API-related software vulnerabilities
+%exists. The benchmark engine has to be as scalable, automated,
+%and efficient.
+%
+%For task 3, we  must answer the following questions: 1)
+%what representations are needed to capture API-related vulnerable
+%code; what are the boundary of an API usage; what an efficiently
+%mining algorithm for the patterns of API usages is, should it be mined
+%on the same projects as the ones for vulnerability detection? 3)
+%should the mining be specific in certain projects or application
+%domains?, 4) should the API-related vulnerable code detection
+%algorithm be separated from the pattern detection one; how would we
+%provide a ranking for candidates; how would we handle alternative
+%usages and semantically correct deviations; how wouldd we
+%overcome challenges listed for existing techniques in task 2.
+
+\end{itemize}
+
+\noindent {\bf Broad Impact criteria} are addressed throughout the
+proposal as follows:
+
+\begin{itemize}
+
+  \item {\bf Transformative and benefits to society}. Our 
+    results will be transformative and directly benefit to our
+    society.  They will lead to increasing developers' productivity
+    and API usability. Our validation involves students and
+    professionals, promoting teaching, training, and learning of APIs
+    and libraries.
+
+%report
+
+  \item {\bf Foster other research activities}. Our results will
+    foster research activities in related fields such as NLP and
+    software maintenance. This project will produce theoretical
+    concepts and techniques that are novel even in NLP, e.g.,
+    graph-based machine translation models. The collected parallel
+    corpus will be useful for software maintenance research, e.g.,
+    code search and text-code linking. This project will also advance
+    the state-of-the-art research in large-scale program analysis with
+    statistical models.
+
+%The representation for software security vulnerabili will be useful in
+%research on software security, malware detection, vulnerability
+%reports, and automatic security patching.
+
+
+  \item {\bf Education, dissemination, and broader participation}.
+  The research will enhance the infrastructure for teaching and
+  research by providing tools and data sets for use by students and
+  practitioners, and for enhancement by other researchers. We will
+  provide related learning modules for educators as well. It will
+  contribute novel teaching modules to our curriculum. Details will be
+  presented in Section 6.
+
+%Details are in Section 4.
+
+\end{itemize}

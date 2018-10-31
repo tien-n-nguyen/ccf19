@@ -1,0 +1,334 @@
+\subsection{Research Objectives and Anticipated Results}
+\label{research-objectives-section}
+
+%which combines the broad coverage of code search methods with the
+%convenience of code synthesis methods.  This will allow us to create
+%developer assistance tools that can synthesize previously unseen code
+%snippets from NL descriptions, over a wide variety of potential
+%developer queries, in many languages.
+
+This is a proposal is to investigate and develop {\bf a scientific
+  foundation and a novel methodology for API usage code synthesis
+from NL queries to accelerate API usability}.
+%
+The results will enable us to create developer assistance tools that
+can synthesize previously unseen code snippets from NL descriptions,
+over a wide variety of potential developer queries, in any application
+domain. First, our key philosophy in this project is the {\bf
+  regularity/repetitiveness of API usages}. Based on our previous NSF
+research project ``Exploiting the Naturalness of Software'', Hindle
+{\em et al.}~\cite{hindle-icse12} has shown that software exhibits its
+naturalness: source code has a higher degree of regularity than
+English texts. We expect the same principle of naturalness of software
+to occur for the API elements in the API code usages. API elements
+including API classes, method calls, and field accesses of software
+libraries do not occur randomly. They appear regularly with certain
+other API elements due to the intent of the libraries¡¯ designers to
+provide certain functionality in API usages. Second, we expect that
+with the advances in machine learning, deep learning~\cite{dnnbook}, and
+statistical machine translation~\cite{smtbook}, which have effectively
+captured the regularities and translate between natural languages, we
+could leverage the regularity of API usages to generate API template
+code from a given NL query.
+%
+In order to achieve our vision, we need to address fundamental
+research problems:
+% that have received little attention:
+%from the software engineering (SE) community:
+
+%graph-thing from NL to software
+
+\noindent \textbf{Task 1. An empirical study to automatically build a
+  large-scale parrallel corpus of text and code and understand the
+  nature of text-code correspondence.}  First, we aim to build a
+large-scale parallel corpus of texts and corresponding API usages.
+The corpus will help us both in training any statistical model that we
+will build for automatic generation of API code and in studying the
+nature of text-code correspondence. The challenges are around how we
+acquire large amounts of clean parallel NL/code data that is suitable
+for training systems. The dataset must be ultra-scale, because the
+statistical models are data-driven. They have the power to model
+complex phenomena, but require substantial amounts of training data.
+Second, the code snippets are usually missing information on the
+correct libraries of the APIs. However, such API type information is
+crucial in learning the mappings between text descriptions and API
+code examples. Third, the mappings between texts and APIs that we mine
+would help us understand whether a text phrase corresponds to a code
+fragment, or AST's sub-tree, or a sub-graph in a program dependence or
+control flow graph. Thus, it would help us to build better statistical
+machine translation models to generate API code. 
+
+To address those challenges, we are currently investigating the online
+resources such as StackOverflow and GitHub. To avoid manual annotation
+cost as in translation for NL texts, we utilize the modern
+StackOverflow analysis tools. For example, we will use the ACE
+tool~\cite{rigby-icse13} by Rigby and Robillard to automatically
+extract code snippets and annotate them with the type information for
+the API code elements. We will develop a method to derive type
+information for incomplete code snippets on StackOverflow.
+
+
+%API misuses and their relation to the security vulnerabilities. We
+%have been conducting an ongoing empirical study on open-source
+%projects and classifying them into different categories. We aim to
+%develop an API-Misuse Classification (MUC) as a taxonomy for API
+%misuses and a framework to assess the capabilities of misuse
+%detectors. In a previous work, we develop MUbench, a data set of API
+%misuses that we collected by reviewing over 1,200K reports from
+%existing bug datasets and conduwcting a developer
+%survey~\cite{ANNN+16}. MUBench provided us with the sample misuses
+%needed to create a taxonomy. To cover the entire problem space of API
+%misuses, we used Boa, our data mining infrastructure~\cite{boa-icse13}
+%to further mine the misuses to this data set by looking at examples
+%and claimed capabilities from API-misuse publications, and studies on
+%API-usage directives.
+
+%------------------------------
+
+%Tien: come back here later
+%OpenSSL is a software library for applications that secure communications over computer networks
+
+\noindent {\bf Task 2. API Usage Code Synthesis: Models,
+  Representations, and Methodologies.} The second major thrust of this
+proposal will be to create models for code synthesis from NL text
+descriptions. The key question is how we can create statistical code
+synthesis models that are flexible, robust, and sensitive to the
+context in which the API code is used. The challenges to achieve our
+vision is the statistical translation models that are able to (1) make
+use of large-scale amounts of data collected in the parallel corpus;
+(2) be {\em programming language-oriented}, flexible and effectively
+in representing API usage code (all existing work for code synthesis
+have used directly existing machine translation models for NL that are
+based on phrases, while code has structured and well-defined semantics
+in term of data and control flows); (3) flexibly support several
+languages for any application domains; (4) effectively represent
+program properties in any domain.
+
+To address those challenges, we plan to investigate and design a
+context-sensitive, {\bf graph-based statistical translation} approach
+that receives an English query on a programming~task and suggests an
+API usage~template. We will choose graphs as a new representation and
+will design graph-based translation models to fit with source code in
+programming languages.
+%
+We will develop {\bf a graph synthesis algorithm for API
+  usages}. First, the set of relevant API elements is derived from the
+query by our novel {\bf contextual expansion algorithm} that maps the
+words in the query into those elements.  Then, our model ensembles
+those elements into a usage graph that represents an API usage with
+data and control dependencies among its elements. For graph
+synthesis, an API usage is represented by {\em a usage graph} that
+models data and control dependencies among its API elements.
+%
+It starts from the pivotal API element in a graph and gradually adds
+other nodes (and the corresponding inducing edges) via a beam search
+strategy. It aims to cover the derived API elements and to maximize
+both 1) the {\em relevance~to the words in the query} and 2) the
+regularity of the newly built {\em API usage (sub)graph} (measured via
+a graph-based language model GraLan~\cite{icse15} as its occurrence
+likelihood within a large corpus of API usage graphs extracted from
+code). With graphs, we support {\em partial orders among API
+  elements} in API usages. Data and control dependencies help connect
+relevant yet distant API elements in usages, and eliminate irrelevant
+APIs even when they are~close.
+
+%A benchmark infrastructure and dataset to evaluate API misuse
+%detectors and a comparative study to discover their strengths and
+%drawbacks. From the API misuses collected in the previous task, we
+%extend MUBench to develop a benchmark infrastructure to empirically
+%assess the peformance of existing API misuse detecting tools. In our
+%preliminary findings, we reveal that existing detectors focus on very
+%specific types of misuses and suffer from low precision and
+%recall. More specifically, it identifies several major problems as
+%follows: (1) Detectors fail to distinguish correct usages from
+%misuses, due to not capturing sufficient code details in their
+%representations; (2) Detectors ignore alternative usage patterns and
+%semantically correct deviations, e.g., using a subtype versus a
+%supertype, naively assuming that all deviations from frequent usages
+%are misuses; (3) Detectors often fail to relate misuses with patterns,
+%because they assume that a misuse misses only one or two facts and
+%shares at least one fact with a pattern. However, some types of
+%violations affect more than two facts from the underlying
+%representation; (4) Detectors have poor ranking strategies. They rank
+%many false positive findings higher than true positive ones.
+
+
+%\begin{itemize}
+%  \item Detectors fail to distinguish correct usages from misuses, due to not capturing sufficient code details in their representations.
+%  \item Detectors ignore alternative usage patterns and semantically correct deviations, e.g., using a subtype versus a supertype, naively assuming that all deviations from frequent usages are misuses.
+%  \item Detectors often fail to relate misuses with patterns, because they assume that a misuse misses only one or two facts and shares at least one fact with a pattern. However, some types of violations affect more than two facts from the underlying representation.
+%  \item Detectors have poor ranking strategies. They rank many false positive findings higher than true positive ones.
+%\end{itemize}
+%
+
+%We learn that evaluations mostly apply detectors in an intra-project
+%setting; they learn correct usages solely from the project in which
+%they detect misuses. A presented hypothesis is that detectors' low
+%recall may be because individual projects do not contain enough usage
+%examples for learning good~patterns.
+
+%OLD
+%From our study, we envision to support the identification
+%(prediction/detection/prevention) and resolution (fixing) of similar
+%security vulnerabilities on different systems based on the
+%investigation of previously identified/resolved vulnerabilities on the
+%systems that are similar in term of usage (i.e. software reuse).
+
+\noindent {\bf Task 3. Integrating Code Synthesis into Developer
+  Assistance Tools.}  Our goal in this task is to create developer
+tools that allow them to enter a text description in NL, and produce an
+API usage code that accurately implements the user¡¯s request in the
+description. With the capability of our models, we will create and
+release tools for general consumption, solicit feedback from a wide
+variety of developers, and examine how developers use our developer
+assistance tools in an IDE or other enviroments, e.g., a Web-based API
+that can be accessed programmatically by tool builders, plugins to
+integrated development environments (e.g., Eclipse) that access the above
+API, or a website where users can input their queries.
+
+% The methodology and tool for identification/prevention and resolution
+% of API-related vulnerabilities.} We will leverage the knowledge
+%   learned from the empirical study on real-world API-related
+%   vulnerabilities and strengths and weaknesses of existing API misuse
+%   detectors to develop methods and tools for detecting and patching
+%   the API-related vulnerabilities across different systems. As parts
+%   of this task, we will develop the following: (1) the representation
+%   for vulnerable code that sufficiently and effectively represent
+%   security vulnerabilities as graph-based vulnerability models, with
+%   nodes for software entities, and edges for their
+%   relations/dependencies; (2) a mining algorithm for the patterns of
+%   API usages that reflect the correct and incorrect usages; and (3)
+%   an effective algorithm to detect API-related vulnerable code.
+%
+%Moreover, we focus on code-semantic-aware, frequent-subgraph-mining
+%and graph-matching algorithms to identify patterns and violating
+%instances. We will develop a systematically designed ranking strategy
+%to improve precision.
+
+
+
+
+%We propose to investigate a comprehensive and scientific methodology
+%to achieve that ultimate goal. To do that, we first need to 1)
+%understand the nature of similar software security vulnerabilities:
+%whether they really recur because of the reuse? and how we could
+%recognize such reuse? We also need to know the popularity and the
+%severity of such vulnerabilities, as well as the characteristics of
+%corresponding buggy software artifacts. With such knowledge, we will
+%develop the techniques that 2) capture the knowledge of such
+%vulnerabilities and their solutions, and then 3) leverage such
+%knowledge in finding/detecting and patching the similar
+%vulnerabilities across different systems.
+%
+%Our key philosophy for the approach is that: ``The \emph{reuse} of
+%protocols, algorithms, procedures, modules, APIs, libraries,
+%frameworks, or source code could cause \emph{similar vulnerabilities},
+%i.e. when a bug or a security vulnerability occurs at one software
+%entity, it likely occurs at the corresponding counter-parts of that
+%entity''.
+%
+%Based on the philosophy, we propose the three following research tasks:
+%
+%\noindent \textbf{Task 1. An empirical study to understand the nature
+%of similar security vulnerabilities and their relation to different
+%levels of software reuse}.
+%%the characteristics of reused software artifacts}.
+%Among the software artifacts related to vulnerabilities, we will
+%emphasize on security reports and source code. We plan to read and
+%analyze the security reports, and corresponding source code files and
+%patches to answer the following questions: How popular and severe are
+%the similar vulnerabilities?  Do they recur all due to the reuse
+%practice? What are the levels of recurrence/similarity/reuse:
+%specification, protocol, algorithm, design, code? What are the
+%features of the reports and code fragments corresponding to the
+%vulnerabilities that could help us characterize them and recognize the
+%similar ones, and from there, develop automated methods to prevent
+%them?
+%
+%%Our main hypothesis in this empirical study is that: reuse (protocols,
+%%algorithms, modules, libraries, source code files) causes similar security vulnerability, i.e. .
+%%similar code, similar code has similar bug, thus, causing similar
+%%vulnerabilities.
+%
+%\noindent \textbf{Task 2. Scientific foundation for the representation
+%and similarity measurement for software vulnerabilities}. We plan to
+%use the knowledge gained from Task 1 to investigate the theoretical
+%foundation for the \emph{representation} and \emph{similarity
+%measurements} of security vulnerabilities and relevant code
+%entities. Based on our philosophy of reuse, the desired representation
+%and similarity measurements for vulnerabilities will mainly rely on
+%the usage relation(s) among the entities in software systems. The
+%usage relation could be at different levels: software components,
+%modules, libraries, or code entities (classes, methods, functions),
+%etc.  We will use it to represent the security vulnerabilities as
+%graph-based vulnerability models, with nodes for software entities,
+%and edges for their relations/dependencies. Then, we will develop
+%techniques to build such representation models from vulnerability
+%reports written in a  standard form and from corresponding code
+%entities and their fixes. We will develop graph-based techniques
+%to measure the similarity of such models.
+%
+%%The ultimate goal of this task is to identify if a
+%%newly reported vulnerability is similar to an existing one. Normally,
+%%a newly reported vulnerability is expressed in some standard form
+%%(e.g. CVE format~\cite{cve}). Therefore, we will develop a technique
+%%to extract important information from the  and convert them into our representation
+%%so that we could use our similarity measurement among the
+%%vulnerabilities.
+%
+%\noindent \textbf{Task 3. The methodology for
+%identification/prevention and resolution of similar
+%vulnerabilities}. We will develop a novel methodology that, based on
+%the knowledge of the prior known vulnerability (e.g. its
+%characteristics, the location of corresponding buggy code, and how it
+%was fixed), \emph{identifies} the similar vulnerability in other
+%systems and \emph{suggest} the resolution for that vulnerability. As
+%parts of this task, we will develop the following {\em algorithms}:
+%
+%1) to map software entities between security reports and from a report
+%   to corresponding source code fragments/modules/components. This
+%   algorithm will be mainly based on textual analysis and information
+%   retrieval techniques for locating the concepts between different
+%   artifacts.
+%
+%2) to determine the modules/source file locations in the new system
+%that correspond to the buggy modules/locations in the known
+%vulnerability. The algorithm is mainly based on finding similar code.
+%
+%%For example, if they reuse the same algorithm, we will find the code in the new system that implements the same algorithm as the previously
+%%buggy system.
+%
+%3) to derive the patching/fixing to the new system from the prior
+%fix. Since the systems having similar vulnerabilities might have differences at several levels, we will develop different
+%resolution techniques, ranging from recommendations, suggestions, to
+%automatic patches.
+%We will show suggested fixes, e.g., the fixes in source files or updates in API modules.
+
+%For the algorithm 1), we will rely on the reuse between two
+%systems. For example, if they reuse the same algorithm, we will find
+%the code in the new system that implements the same algorithm as the
+%previously buggy system. For the algorithm 2), we will use the
+%information retrieval techniques for locating the concepts that a
+%report mentions about. For example, a vulnerability report refers to
+%the source files that handle the connection to a Web server.
+%algorithm 2 will analyze the textual description in the report and
+%automatically locate those source files. For the algorithm 3), we will
+%limit to the recommendation and suggestion only. We will show
+%suggested fixes, for example, the fixes in source files or updates in
+%API modules.
+
+%Based on the techniques developed in task 2, and the knowledge of
+%known vulnerabilities (code/document/report), we could be able to
+%identify locations of potential similar vulnerabilities and provide
+%patching/fixing recommendation. That is, when a vulnerability is
+%discovered on a system, we will compare that system (or corresponding
+%module(s)) to other systems, to determine whether they have similar
+%reuse related to that vulnerability.
+
+%The mapping between the vulnerability report and the source code, as
+%well as the patches of the first system, could be used to recommend
+%the potential location for patching and the corresponding patches for
+%the other systems.
+
+%Similarity and mapping between those code modules/reports is derived
+%based on each level of reuse: code, API, algorithm, etc.

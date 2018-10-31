@@ -1,0 +1,95 @@
+\section{Evaluation Plan}
+\label{eval-section}
+
+Our {\em goals} of the evaluation plan include the studies to answer the questions:
+
+1) {\bf Intrinsic evaluation.} How accurate are our mining and API
+usage code synthesis approaches, and how well are they in comparison
+with the state-of-the-art approaches?
+
+2) {\bf Extrinsic evaluation.} How well do our proposed tools and methods help developers in
+improving the learning and usages of APIs in software libraries?
+
+3) How effectively do the proposed tools and methods help developers
+in real development processes?
+
+%1) the
+%evaluation the understanding of the characteristics and nature of API
+%misuses related to security vulnerabilities and their corresponding
+%causes, 2) the evaluation of identification methods for potential
+%API-misuses related vulnerabilities, and 3) the evaluation of the
+%quality of the suggested locations/components and recommendations for
+%a new vulnerability in a new system. 
+
+%For the goal~1, the correctness in the understanding of
+%characteristics and the representation of API-related vulnerabilities
+%will be evaluated in the performance evaluation of techniques and
+%tools built for detecting potential vulnerabilities and
+%recommendations. To achieve the goals 2 and 3, we plan to perform {\em
+%  empirical evaluation} tasks. Let us next provide the details for
+%those evaluation tasks.
+
+\subsection{Instrinsic Evaluation of the proposed Code Mining and API Usage Synthesis}
+
+First, we will perform automatic evaluation on the accuracy of the
+constructed text-API usage code snippet pairs. We plan to
+automatically build a corpus as gold-standard data. We will mine the
+StackOverflow data collected in Rigby and
+Robillard~\cite{rigby-icse13}. In the dataset, we currently use
+236,919 entries, each of which has two parts: 1) the textual
+descriptions of the usage/purpose of some programming task, and 2) the
+corresponding bag of API elements that are extracted from the posts
+(including from its descriptions and code snippets). The posts and
+code elements were extracted via the ACE tool. We will expand the
+dataset for further evaluation. We compare the inferred bags of
+elements against the bags of API elements for those posts in the
+StackOverflow dataset. We will then measure the precision, recall, and
+F-measure of the pairs that are automatically extracted using our
+techniques.  Recall is defined as the ratio between the number of
+elements that appear in both the actual and inferred bags of elements
+and the number of actual API elements. Precision is the ratio between
+the number of API elements that appear in both the actual and inferred
+bags of elements and the number of inferred elements.
+
+For API usage synthesis approaches, we will use the code snippets in
+the above dataset. However, we will compare the generated API usages
+against those code snippets. We will use the metrics on {\em syntactic
+correctness} (how well do the code compile and run), and {\em semantic
+correctness} (how well do the code match the desired API usages).
+
+\subsection{Evaluation on usefulness of the approaches in helping
+developers in learning API usages}
+
+We will perform controlled experiments to evaluate our methods and
+tools with developers in the loop using the actual system. We will
+gather developers and provide them various programming tasks, and
+compare the efficiency of their work with our methods/tools to the
+baseline approaches, e.g., with the Web-based code search or other
+code synthesis approaches.
+
+We will measure the efficiency of the work using different methods
+based on the following evaluation metrics. First, we measure
+efficiency. This could be measured by the time for developers to
+perform the tasks or the number tasks completed by developers in a
+period of time. Second, we measure coding effort: how much effort that
+developers must do to complete the API usages given the API code from
+the methods. Third, we will measure semantic correctness, either by
+the number of passing test cases or by human judgements. Finally, we
+will perform surveys on the quality of the synthesized API usage code
+to get the feedback for future improvement in the next step.
+
+
+\subsection{Evaluation on  proposed tools and methods in helping developers
+in real-world development}
+
+We will perform a set of user studies on the usefulness of our
+proposed IDE tools and Web-based tools in the wild by releasing our
+tools in the actual real-world development. We will analyze all the
+aspects as in the previous studies, as well as the frequency of usage
+of code suggestions, and the total uptake of the tools.  We will track
+the changes that developers make to the generated code and record
+their feedback to improve our tools.
+
+We will work with our collaborators in Microsoft, IBM, and ABB research
+to perform user studies on the groups of developers in certain tasks
+to evaluate the usefulness of our proposed tools.
