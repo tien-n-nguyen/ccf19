@@ -2,7 +2,223 @@
 \label{task1-section}
 
 \subsection{The representation for feature-interaction}
+In a configurable system, a \textit{feature} is an optional
+functionality in addition to a special feature - \textit{the core
+  feature} (i.e., \textit{the base variant}) which is enabled in every variant of the system. Features
+are implemented as statically conditional statements\footnote{For the
+  purpose of localization, we assume that statement is the unit of
+  program that need to be considered in the fault localization
+  problem.} guarded by constraints over feature symbols (e.g.,
+\texttt{\#if} macro). In the running example, feature \texttt{LOCKDEP}
+contains the set of statements from line 20 to 27.
 
+\begin{figure}[h]
+\begin{center}
+\lstinputlisting[captionpos=b, numbers=left, stepnumber=1, frame=single]{example_2.c}
+\caption{A Configuration-dependent Bug in Linux Kernel}
+\label{example_bug}
+\end{center}
+\end{figure}
+
+%Feature
+\begin{Definition}{({\bf Feature}).}
+A feature is implemented as a set of optional statements that are 
+guarded by constraints over feature symbols. Given a configurable 
+system implemented by a set of statements $\mathbb{S}$, we define a function 
+$\varphi: F\to 2^{\mathbb{S}}$, where $F$ is the set of features in the 
+configurable system. $\varphi(f)$ refers to the set of statements 
+that implement feature $f$.
+\end{Definition}
+
+In Fig.~\ref{example_bug}, $\varphi($\texttt{SLAB}$)$ is the set of
+statements from lines 11--12, while
+$\varphi($\texttt{PPC\_256K\_PAGES}$)$ contains only line 4.
+
+\begin{Definition}{({\bf Feature Selection}).}
+A feature selection of feature $f$ is a state of feature that is 
+either enabled or disabled ($f=T/F$ for short).
+\end{Definition}
+%
+In preprocessor-based program families \cite{kastner2012virtual}, a 
+feature selection is controlled by one or more \textit{configuration 
+options} (macro symbols). In the example, the feature \texttt{LOCKDEP} 
+is controlled by the configuration option \texttt{CONFIG\_LOCKDEP}.
+%
+In a configurable system, the selections of features are used to specify
+particular configurations (variants) of the system.
+%
+%Configuration
+\begin{Definition}{({\bf Configuration}).}
+In a configurable system consisting of the set of features $F$, a 
+configuration $c$ is a particular set of the selections of all 
+features in $F$. We denote $\mathbb{C}$ as the set of all possible 
+configurations of the system.
+\end{Definition}
+%
+In practice, a {\em configuration-dependent} bug can be revealed
+during testing, in which there are configurations failing at least
+one test, while others pass all their tests.
+For example, the bug in Fig.~\ref{example_bug} is revealed only in
+$c_2$ and $c_7$ in which the features \texttt{LOCKDEP},
+\texttt{PPC\_256K\_PAGES}, \texttt{!SLOB}, and \texttt{SLAB} are all
+enabled and \texttt{PPC\_16K\_PAGES} is disabled.
+
+%Entity
+%In a program, we are interested in the program entities and the
+%operations that are performed on them.
+\begin{Definition}{({\bf Program Entity}).}
+A program entity is a program element uniquely identified with
+a \textit{name} and a \textit{scope}.
+\end{Definition}
+
+In our formulation, we are interested in two types of program
+entities: {\em variable} and {\em function}.
+%
+An entity is represented in the form of \texttt{[scope.ent\_name]},
+where \texttt{scope} and \texttt{ent\_name} are the scope and the 
+name of the program entity respectively. The \textit{scope} and the
+\textit{name} of an entity are used together as the identity of the
+entity. For example, the code in Fig.~\ref{example_bug} contains
+variables \texttt{GLOBAL.kmalloc\_caches}, \texttt{init\_node
+\_lock\_keys.i}, and function \texttt{GLOBAL.init\_lock\_keys}.
+%
+
+%Program Operation
+In our work, there are two {\bf program operations} on variables and
+functions: \textit{define (def)} and \textit{use}. A \textit{def}
+operation is used to \textit{assign} a value to a variable or
+\textit{define} the body for a function. Meanwhile, a variable is
+\textit{used} when it is \textit{used} or \textit{referred} to. A
+function is \textit{used} if it is \textit{called}/\textit{invoked} or
+used as a function pointer (C/C++). For example, the function
+\texttt{GLOBAL.init\_node\_lock\_keys} is \textit{defined} as a set of
+statements from lines 21--26 and \textit{called/used} in the statement
+at line 33. For a variable \texttt{X}, it might be \textit{declared}
+or \textit{destructed}. However, without loss of generality, when
+\texttt{X} is declared or destructed, we consider that it is
+\textit{defined} with \texttt{UNINIT} or \texttt{UNDEFINED}
+respectively. For instance, the value of
+\texttt{init\_node\_lock\_keys.i} is \texttt{UNINIT} at line 21.
+%
+%Implementation Functions
+
+Given a program, $E$ is the set of program entities, and $\mathbb{S}$
+is the set of statements of the program, we use 2
+\textit{implementation functions} to map each entity in $E$ to the
+sets of statements in $\mathbb{S}$ that implement its definitions and
+uses:
+\begin{Definition}{({\bf Implementation Functions}).}
+\begin{itemize}
+  \item $Define:E \to 2^\mathbb{S}$, $Define(e)$ is the set of statements that 
+  implement the {\bf definitions} of $e$
+  \item $Use:E \to 2^\mathbb{S}$, $Use(e)$ is the set of statements that 
+  implement the {\bf uses} of $e$
+\end{itemize}
+\end{Definition}
+In Fig.~\ref{example_bug},
+$Define($\texttt{GLOBAL.kmalloc\_caches}$)$ contains only statements
+at line 16, while, the statement at line 24 is the only element of
+$Use($\texttt{GLOBAL.kmalloc\_caches}$)$. For the compound
+statements, we also consider the conditional expressions
+(\textit{if-statement}, \textit{for-loop}, \textit{while-loop} and
+\textit{do-loop}), the control expressions or the options
+(\textit{switch-statement}), and take them into account for localizing
+bugs.
+%
+% Break flow
+
+%
+
+%
+%In practice, a feature (parent-feature) might contain several other features 
+%(child-features). For example,...
+
+%Feature
+\begin{Definition}{({\bf Feature-related Functions}).}
+In a configurable system, which is implemented by a set of statements 
+$S$ and consists of a set of features $F$ and a set of program 
+entities $E$, we define two feature-related functions:
+\begin{itemize}
+	\item $def:F \to 2^E$, $\forall e \in E, e \in def(f) 
+	  \Leftrightarrow 	Define(e) $ $\cap \quad \varphi(f) \neq \emptyset$. That is, if the set of statements implementing the definitions of $e$ overlaps with the set of statements realizing the feature $f$, then $e$ belongs to $def(f)$.
+          For a program entity, $def(f)$ is the set of program entities which are defined within 
+	$f$, e.g., \texttt{cpuup\_prepare.node} $\in def($\texttt{NUMA}$)$.
+	%	
+	For a function, $f$ is used to realize their definition. For instance, since the statement at line 31 in \texttt{NUMA} is used to define the body of \texttt{GLOBAL.cpuup\_prepare}, this entity is also an element of $def($\texttt{NUMA}$)$.
+
+	\item $use:F \to 2^E$, $\forall e \in E, e \in use(f)
+          \Leftrightarrow Use(e) $ $\cap \quad \varphi(f) \neq
+          \emptyset$.  That is, if the set of statements~implementing
+          the uses of $e$ overlaps with the set of statements realizing the feature $f$, then $e$ belongs to $use(f)$.
+          %
+	Specifically, $use(f)$ is the set of program entities~that are used within $f$, 
+	e.g., \texttt{GLOBAL.PAGE\_SHIFT}, \texttt{GLOBAL.kmalloc\_cach\-es},~\texttt{GLOBAL.slab\_set\_lock\_classes} $\in use($\texttt{LOCKDEP}$)$.
+	
+%  \item $children: F \to 2^F$, $children(f)$ is the set of features that are 
+%  child-features of $f$
+%  \item $parent: F \to F$, $parent(f)$ the feature that $f$ is one of child-features of
+\end{itemize}
+\end{Definition}
+%
+%
+%\textit{The core feature}, $\Omega$, has no parent-feature, while every feature is
+%contained by another one. If a (parent) feature is disabled, its child-features 
+%are also disabled, and if one of child-features of a feature is enabled, the 
+%feature is also enabled.
+
+In a configurable system, two features can interfere each other 
+through the program entities that are shared to implement these 
+features. In the running example, \texttt{LOCKDEP} \textit{uses} 
+\texttt{PAGE\_SHIFT} (line 22) and \texttt{kmalloc\_caches} (line 24) 
+that are \textit{defined} by \texttt{SLAB} (line 11) and 
+\texttt{!SLOB} (line 16) respectively to implement its functionality.
+Hence, the optional functionality offered by \texttt{LOCKDEP} is
+influenced when \texttt{SLAB} or \texttt{!SLOB} are enabled/disabled.
+%
+%
+In this work, we focus on the feature interactions through shared 
+program entities. The interactions associated with external data such 
+as files or database are beyond the scope of this work. If both 
+features \textit{use} a program entity, they will not change the 
+program's state. By that our assumption, there is no interaction 
+between two or more features if they only \textit{use} the same 
+program entities. 
+%The feature interaction between two features through 
+%shared entities and $def$ and $use$ is described by the following 
+%definition.
+
+%
+%Feature Interaction
+\begin{Definition}{({\bf Feature Interaction}).}
+The interaction between two features $f_1$ and $f_2$ exits if only if 
+$def(f_1) \cap def(f_2) \neq \emptyset$ (called def-def interaction), or $def(f_1) \cap use(f_2) \neq \emptyset$ or $def(f_2) \cap use(f_1) \neq \emptyset$ (called def-use interaction).
+\end{Definition}
+%
+
+By the above definition, we only represent the interaction between a 
+pair of features because the interaction between more than two 
+features is still represented by the interactions of pairs features. 
+Indeed, assuming that there exists an interaction among $m > 2$ 
+features. For simplicity, we consider the case of m = 3, $f_1$, 
+$f_2$, and $f_3$, and $E_1$, $E_2$, and $E_3$ are the sets of share 
+program entities of three pairs of features ($f_1$, $f_2$), ($f_2$, $f_3$), and ($f_3$, $f_1$).
+%
+If there exists a common entity shared between all these features, 
+the interaction among them is still represented through the interactions 
+of the pairs.
+%
+On the other case, there is no shared entity between all features, 
+assuming that $E_1 \cap E_3 = \emptyset$. Since the functionality 
+offered by $f_3$ is influenced by $f_1$\footnote{because the roles of 
+$f_1$ and $f_3$ in this case are equal} through $f_2$, there exists 
+an entity $e_1 \in def(f_1)$ whose value affects another entity $e_3 
+\in use(f_3)$ by a value propagation function $p$, such that $e_3 = 
+p(e_1)$. Hence, by identifying feature interactions between pairs, 
+the interactions among more than two features are still captured. 
+%
+
+\begin{Definition}{({\bf Feature Interaction Implementation}).} The implementation of the interaction between features $f_1$ and $f_2$ are the statements that implement the definitions of the shared entities in $f_1$ and $f_2$ (for def-def interactions) and the uses of the shared entities in $f_1$ and $f_2$ (for def-use interactions).
+\end{Definition}
 \subsection{Feature-interaction detection}
 
 \subsection{The representation and detection for feature-interaction relevant to pointers and external data}
