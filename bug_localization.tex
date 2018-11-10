@@ -1,0 +1,68 @@
+%
+In preprocessor-based program families \cite{kastner2012virtual}, a 
+feature selection is controlled by one or more \textit{configuration 
+options} (macro symbols). In the example, the feature \texttt{LOCKDEP} 
+is controlled by the configuration option \texttt{CONFIG\_LOCKDEP}.
+%
+In a configurable system, the selections of features are used to specify
+particular configurations (variants) of the system.
+%
+%Configuration
+\begin{Definition}{({\bf Configuration}).}
+In a configurable system consisting of the set of features $F$, a 
+configuration $c$ is a particular set of the selections of all 
+features in $F$. We denote $\mathbb{C}$ as the set of all possible 
+configurations of the system.
+\end{Definition}
+
+%In practice, a 
+%configuration-dependent bug can be revealed during testing process, when 
+%there are configurations failing at least one test, while others pass 
+%all their test cases. Even after the system have been released, many 
+%configuration-dependent bugs are newly reported by the end-users when they execute the configurations in their own environments.
+%
+
+In practice, a {\em configuration-dependent} bug can be revealed
+during testing, in which there are configurations failing at least
+one test, while others pass all their tests.
+% Moved to intro
+%Even after the system have been released, many configuration-dependent
+%bugs are newly reported by the end-users when they execute the
+%configurations in their own environments.
+%
+%For example, the bug in Fig.~\ref{example_bug} is revealed only in
+%$c_2$ and $c_7$ in which the features \texttt{LOCKDEP},
+%\texttt{PPC\_256K\_PAGES}, \texttt{\!SLOB}, and \texttt{SLAB} are all
+%enabled and \texttt{PPC\_16K\_PAGES} is disabled.
+%
+%
+For example, the bug in Fig.~\ref{example_bug} is revealed only in
+$c_2$ and $c_7$ in which the features \texttt{LOCKDEP},
+\texttt{PPC\_256K\_PAGES}, \texttt{!SLOB}, and \texttt{SLAB} are all
+enabled and \texttt{PPC\_16K\_PAGES} is disabled.
+%
+In highly configurable systems, most of reported bugs  are 
+configuration-dependent faults that are only exposed under a set of 
+certain configurations \cite{Abal:2018} \cite{Garvin:2011}. 
+
+%
+
+\begin{Definition}{({\bf Configuration-dependent Fault}).}
+In a configurable system, a fault of the system is considered as a
+configuration-dependent bug if only if there are two non-overlapping
+partitions of configurations $CP$ and $CF$, where $CP, CF \subsetneq
+\mathbb{C}$, $CF \cup CP = \mathbb{C}$, and $CF \cap CP = \emptyset$,
+such that all configurations in $CP$ execute as expected, while all
+configurations in $CF$ reveal the bug.
+\end{Definition}
+
+\begin{Definition}{({\bf Configuration-dependent Fault Localization}).}
+Given buggy configurable code, the test result of each configuration,
+and the trace of the executed statements that are recorded for each
+test in each configuration, configuration-dependent fault localization
+is to output the ranked list of statement(s) that are likely to cause
+the fault(s).
+\end{Definition}
+
+
+\input{pc_detection}

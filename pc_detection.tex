@@ -1,0 +1,263 @@
+\subsection{Suspicious partial configuration detection}
+\label{SPC_detection_section}
+
+% Tien
+%Every configuration that contains the fault(s) fails at least one
+%test.
+%
+%Instead of using all the features, we aim to detect the minimal set,
+%called the suspicious partial configuration ($SPC$), that satisfies
+%both neccessity and sufficiency conditions.
+%
+
+\subsubsection{Neccesity and Sufficiency Conditions}
+
+We aim to detect the set of features along with their~feature
+selections that have potential interactions and failed the~tests.  For
+a buggy system, whose sets of passed and failed configurations are
+denoted by $CP$ and $CF$ respectively, we~aim to detect the {\em
+  optimal set of feature selections}, called {\em suspicious
+  partial configuration} ($SPC$) of the fault(s) that must satisfy
+both necessity and sufficiency conditions.
+
+%For the neccesity condition, for any strict subset of $SPC$, there
+%exists a configuration that contains it and does not fail any
+%test.
+
+%For the sufficiency condition, the selections of other features
+%outside of the feature selections in $SPC$ do not have any impact on
+%the test results.
+
+\begin{Definition}{({\bf Necessity}).}
+$\forall SPC', SPC' \subsetneq SPC$, such that $\exists c \in CP$, $c
+  \supset SPC'$.
+\end{Definition}
+
+That is, for the necessity condition, for any strict subset of $SPC$,
+there exists a configuration that contains it and does not fail any
+test.
+
+From the definition, we have that {\em $SPC'$ does not cause the
+  fault(s)} because otherwise, with $c$ containing $SPC'$, $c$ and
+$SPC'$ would fail at least one test, which contradicts to the fact
+that $c$ passes all the tests.
+
+{\bf We need the necessity condition} {\em because if $SPC$ does not
+  satisfy that condition, then \textbf{SSSS} would have to consider
+  $SPC'$ that does not cause the fault(s).} That is, \textbf{SSSS}
+would unnecessarily consider $SPC'$.
+%, that does not cause the bug(s).
+
+%$c$ contains $SPC'$ and $c$ passed all the tests, therefore, {\em
+%  $SPC'$ does not cause the fault(s)} (If it did, $c$ and itself
+%would fail at least one test).
+
+%{\bf We need the necessity condition} {\em because if $SPC$
+%  does not satisfy that condition, then our algorithm will have to
+%  consider the strict subset $SPC'$ of $SPC$ that does not cause the
+% fault(s).}
+
+From the necessity condition, we have the following:
+
+\begin{Corollary}
+$SPC$ must satisfy: $\forall c \in \mathbb{C}$, $c \supset SPC \implies c \in CF$, where $\mathbb{C}$ is the set of all configurations. That is, any configuration $c$ containing $SPC$ fails at least a test.
+\end{Corollary}
+
+%This is because if $c$ does not fail any test, $SPC$ cannot satisfy
+%the necessity condition.
+
+\begin{Definition}{({\bf Sufficiency}).}
+$\forall SPC', SPC' \supsetneq SPC$, such that $\forall c \in \mathbb{C}$, $c \supset SPC' \implies c \in CF$.
+\end{Definition}
+
+%Every configuration that contains the fault(s) fails at least one
+%test.
+
+For the sufficiency condition, the selections of other features
+outside of the feature selections in $SPC$ do not change the test
+results. That is, for any strict superset $SPC'$ of $SPC$, any
+configuration containing $SPC'$ would fail at least one test.
+
+{\bf We need sufficiency condition} otherwise, we will
+unnecessarily consider the other feature selections outside of $SPC$.
+%
+
+\noindent {\bf Proof.} Let us prove this by contradiction. Assuming
+that there exits another {\em necessary} $SPC'$ such that $SPC'
+\supsetneq SPC$, and we consider the feature selections in $SPC'$.
+%
+Due to the necessity condition, we have $\forall PC \subsetneq SPC'$,
+$\exists c \in CP$, $c \supset PC$.
+%
+Let us apply this formula where $PC$ = $SPC$, which is a subset of $SPC'$.
+We have $\exists c \in CP$, $c \supset SPC$, and contradicts
+with Corollary~1 ($c$ must fail at least one test).
+%
+Therefore, $SPC$ must satisfy the sufficiency condition.
+
+%=============================================
+%\begin{itemize}[leftmargin=4mm]
+%\item \textbf{Necessity}: $\forall SPC', SPC' \subsetneq SPC$, such that $\exists c \in CP$, $c \supset SPC'$.
+
+%Because if there exits a passed configuration that contains all $SPC'$, $SPC'$ \textbf{dose not} cause the bug.
+
+%\textbf{Corollary}: $SPC$ must satisfy: $\forall c \in \mathbb{C}$, $c \supset SPC \implies c \in CF$, where $\mathbb{C}$ is the configuration space of the system (1).
+
+%\item \textbf{Sufficiency}: $\forall SPC', SPC' \supsetneq SPC$, such that $\forall c \in \mathbb{C}$, $c \supset SPC' \implies c \in CF$.
+
+%Indeed, assuming that there exits another \textbf{necessary} $SPC'$, $SPC' \supsetneq SPC$. We have $\forall PC \subsetneq SPC'$, $\exists c \in CP$, $c \supset PC$, which leads to $\exists c \in CP$, $c \supset SPC$, and contradicts with (1). Therefore, $SPC$ must satisfy the sufficiency condition.
+
+%\end{itemize}
+%==============================================
+
+%OLD
+%This section describes our algorithm to detect the minimum sets of features whose enabling and disabling can change the test results, given the test results for each configuration (e.g., Table~\ref{test_resutls}).
+%
+%Intuitively, for a particular failed configuration, such features are the features that when we enable/disable each of them, and then the resulting configuration is passed.
+%
+%We call a set of the selections of such features in the failed configuration is a \textit{suspicious partial configuration} (SPC). SPC is a candidate for the \textit{fault-causing partial configuration} of the \textit{configuration-dependent fault} in that configuration.
+
+%\input{sufficient_necessary}
+
+%\subsection{Formulation}
+
+% $\mathbb{C}$ is the configuration space
+
+%CP and CF are the set of passed configurations and the set of failed configurations repspectively.
+
+%PC is a set of feature selections
+
+
+%Sufficient: $\forall PC', PC' \supsetneq PC$, such that $\forall c \in \mathbb{C}$, $c \supset PC'  \implies c \in CF$
+
+
+%Necessary: $\forall PC', PC' \subsetneq PC$, such that $\forall c \in \mathbb{C}$, $c \supset PC' \implies c \in CP$
+
+
+%Configuration-dependent Fault
+%\begin{definition}{({\bf Configuration-dependent Fault}).}
+%In a configurable system, a fault of the system is considered as a
+%configuration-dependent bug if only if there are two sets of
+%configurations $CP$ and $CF$, where $CP, CF \subsetneq \mathbb{C}$, such
+%that all configurations in $CP$ execute as expected, while all
+%configurations in $CF$ reveal the bug.
+%\end{definition}
+%
+%For example, the bug in the Fig.~\ref{example_bug} is revealed only in $c_2$ and $c_7$ in which the features \texttt{LOCKDEP}, \texttt{PPC\_256K\_PAGES}, \texttt{\!SLOB}, and \texttt{SLAB} are all
+%enabled and \texttt{PPC\_16K\_PAGES} is disabled.
+%
+%In highly configurable systems, most of reported bugs  are
+%configuration-dependent faults that are only exposed under a set of
+%certain configurations \cite{Abal:2018} \cite{Garvin:2011}.
+
+\subsubsection{Important Property to Build the $SPC$ set}
+
+%OLD ==================================================
+%In fact, in a configurable code containing a configuration-dependent
+%bug, not all features are relevant to the visibility of the bug. Yet,
+%there are certain features that are enabled or disabled, in which {\em
+%  the bug is revealed during executing/testing every configuration
+%  containing these feature selections, regardless of the selections of
+%  other features}. For example, in Fig.~\ref{example_bug}, the bug is
+%only triggered by the set of enabled features including
+%\texttt{LOCKDEP}, \texttt{PPC\_256K\_PAGES}, \texttt{\!SLOB}, and
+%\texttt{SLAB}, along with the disabling of \texttt{PPC\_16K\_PAGES},
+%regardless of \texttt{NUMA}. The bug is invisible if
+%\texttt{PPC\_16K\_PAGES} is enabled.
+
+%\begin{definition} \label{fault-causing-partial-config-def} {({\bf Fault-causing Partial Configuration}).}
+%Given a configurable system containing configuration-dependent bugs,
+%the fault-causing partial configuration $PC$ of a particular
+%configuration-dependent bug is the non-empty minimal set of feature
+%selections, such that $\forall c \in \mathbb{C}, c \supseteq PC
+%\implies c \in CF$, where $CF$ is the set of configurations that
+%reveal the bug.
+%\end{definition}
+
+%For example, the fault-causing partial configuration of the bug in
+%Fig.~\ref{example_bug} is \{\texttt{SLAB=T},
+%\texttt{PPC\_16K\_PAGES=F}, \texttt{PPC\_256K\_PAGES=T},
+%\texttt{LOCKDEP=T}, \texttt{\!SLOB=T}\}.
+%=============================================================
+
+Before presenting how we construct $SPC$, let us explain the
+following important property of $SPC$ that is useful in such
+construction. From the above conditions, we have
+
+%By Definition~\ref{fault-causing-partial-config-def}, we have
+%following property that is useful to build the suspicious partial
+%configuration.
+
+%\begin{property}
+%\label{proper_1}
+%For a failed configuration $c \in CF$ that contains a fault-causing
+%partial configuration $PC$, $\forall s_1, s_2 \neq \emptyset$, $s_1 = S
+%\backslash s_2$, if $\exists c' \in CP$, such that $s_1 \subset c'$,
+%then $s_2 \cap PC \neq \emptyset$.
+%\end{property}
+%
+%Indeed, if the subset $s_1$ of $c$, is a part of a passed configuration, $c' \in CP, s_1 \subset c'$, then is not fully contained by $s_1$, $PC \not \subseteq s_1$, because if $PC \subseteq s_1$, $c' \supset PC$ and $c'$ is failed. This leads to a part or the whole of $PC$ must be contained by $s_2$. If $s_2$ contains only one selection $s$, then $s \in P$.
+
+%\begin{property}
+%\label{proper_2}
+%For a failed configuration $c \in CF$ that contains a fault-causing
+%partial configuration $PC$, if $\forall s \in c$, $\exists c' \in CP$,
+%such that $c \backslash s \subset c'$, then $s \in PC$.
+%\end{property}
+
+\begin{Property}
+\label{proper_2}
+For a failed configuration $c \in CF$ that contains the suspicious
+partial configuration $SPC$, if a feature $f$ of selection $s \in c$
+is changed to $s' \neq s$, and the resulting configuration $c' =
+\{s'\}+c \backslash \{s\}$ is passed, then $s \in SPC$. That is, if we
+switch a selection of a feature $f$ in a failed configuration $c$ and
+the resulting configuration $c'$ now passes all the tests, then that
+selection of $f$ must be in the $SPC$ set.
+\end{Property}
+
+\noindent {\bf Proof.} Indeed, if $S_1 = c \backslash \{s\}$ is a part
+of a passed configuration, $c'$, and $S_1 \subset c'$, then $SPC \not
+\subseteq S_1$. Meanwhile, $SPC \subseteq c$, which leads to $c
+\backslash {S_1 }\cap SPC \neq \emptyset$, $c \backslash {S_1}=\{s\}$,
+and $s \in SPC$.
+%
+
+In the running example, for the failed configuration $c_2$, the
+selection $s=$\texttt{(SLAB=T)}, $c_2 \backslash s \subset c_4$, $c_4
+\in SPC$, and \texttt{(SLAB=T)} is an element of the $SPC$ contained
+by $c_2$. In general, the principle of the examining if a selection is
+an element of $SPC$ in property \ref{proper_2} can be applied for any
+set of selections that contains $SPC$, not only failed configurations.
+%
+
+\subsubsection{Detailed Algorithm to Build the $SPC$ Set}
+
+In the general cases, we use Property \ref{proper_2} to build the $SPC$
+of configuration-dependent bugs. Using this property, we can start
+with each feature selection that makes the bugs visible in each failed
+configuration, and expand it gradually.
+%
+
+In the case that system contains a single bug, all configurations in
+$CF$ are failed by the same bug. This leads to the $SPC$ of the single
+bug in the system is the common subset of all failed configurations,
+$SPC \subseteq \bigcap {c_i}$, where $c_i \in CF$.
+
+\input{alg_1}
+
+In this version of \textbf{SSSS}, we implement the algorithm to detect
+suspicious partial configuration of single bug in configurable system
+(Algorithm \ref{alg_1}), given the test results ($CP$ and $CF$), based
+on Property~\ref{proper_2}. In Algorithm~\ref{alg_1}, to detect the
+suspicious partial configuration, $SPC$, the set of all
+selections that need to be examined ($examinedSels$) is identified by
+finding the common subset of all failed configurations in $CF$ (line
+3). Next, to construct $SPC$, each selection in
+$examinedSels$ is examined whether it is an element of the
+suspicious partial configuration (lines 4--9).
+%
+For the running example, the detected suspicious partial configuration
+by Algorithm~\ref{alg_1} is \{\texttt{PPC\_16K\_PAGES=F},
+\texttt{SLAB=T}, \texttt{PPC\_256K\_PAGES=T}, \texttt{LOCKDEP=T},
+\texttt{!SLOB=T}\}.

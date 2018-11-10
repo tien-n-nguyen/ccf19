@@ -1,0 +1,231 @@
+%Son, optional segment of code --> feature
+In practice, a configurable system usually provides a large number of
+{\bf configuration options} to configure several optional segments of code
+to be present or absent, in addition to
+\textit{the core} of the system.
+%
+Those optional segments of code are aimed to realize the
+optional \textbf{features} of the system.
+%
+For example, in Linux Kernel, the configuration options have the
+prefix of \texttt{CONFIG\_}, and they can have different
+values. Without loss of generality, we assume that the value of a
+configuration option is either \texttt{true(T)} or
+\texttt{false(F)} (We can consider the entire conditional
+  expressions of non-boolean options as boolean ones, e.g.,
+  \texttt{CONFIG\_A>10} as \texttt{CONFIG\_A>10=T/F}).
+
+\begin{Definition}{({\bf Configuration Option}).}
+A configuration option ({\em option} for short) is an element that is used
+to configure the source code of a configurable system, such that the
+option's value determines the presence or absence of one or more
+segments of~code.
+\end{Definition}
+
+In a configurable system, the presence or absence of code segments is
+dependent on the values of multiple options. In Figure~\ref{example1},
+the lines 19 and 20 are presented only when both
+\texttt{CONFIG\_TWL4030\_CORE} and \texttt{CONFIG\_OF\_IRQ} are
+\texttt{T}. Thus, at line 19, \texttt{irq\_domain\_simple\_ops} is
+potentially used to assign as a value to the variable \texttt{ops}
+when both above options are \texttt{T}.
+
+%\texttt{CONFIG\_OF\_IRQ} is \texttt{true}.
+
+\begin{Definition}{({\bf Selection Functions}).}
+In a configurable system, we define selection functions as the
+functions from $O\times V$ to $2^P$, where $O$ is the set of
+configuration options, $V=\{\texttt{T, F}\}$, and $P$ is the set of program
+entities used in the code of the configurable system. We define four selection functions:
+
+\begin{itemize}[leftmargin=4mm]
+
+\item $\alpha: O \times V \to 2^P$, $\alpha(o, v) = D$, where $o \in O, v \in \{\texttt{T, F}\}$, and $D$ is the set of entities potentially {\bf declared} if $o = v$.
+
+\item $\beta: O \times V \to 2^P$, $\beta(o, v) = D$, where $o \in O, v \in \{\texttt{T, F}\}$, and $D$ is the set of entities potentially {\bf assigned} if $o = v$.
+
+\item $\gamma: O \times V \to 2^P$, $\gamma(o, v) = D$, where $o \in O, v \in \{\texttt{T, F}\}$, and $D$ is the set of entities potentially {\bf used} if $o = v$.
+
+\item $\delta: O \times V \to 2^P$, $\delta(o, v) = D$, where $o \in O, v \in \{\texttt{T, F}\}$, and $D$ is the set of entities potentially {\bf destructed} if $o = v$.
+\end{itemize}
+
+\end{Definition}
+
+For example, in Figure~\ref{example1}:
+
+\begin{itemize}
+
+\item $\alpha($\texttt{CONFIG\_SPARC, F}$)$=$\{$\texttt{GLOBAL.of\_platform\_populate, of\_platform\_populate.node}$\}$
+
+\item $\beta($\texttt{CONFIG\_OF\_IRQ, T}$)$=$\{$\texttt{twl\_probe.ops}$\}$
+
+\item $\gamma($\texttt{CONFIG\_OF\_IRQ, T} $)$=$\{$\texttt{GLOBAL.irq\_domain\_simple\_ops}$\}$
+
+\end{itemize}
+
+\begin{Definition}{({\bf Configuration}).}
+Given a configurable system, a configuration is a specific
+selection of configuration options, which defines a \textbf{variant}
+of the system.
+\end{Definition}
+
+Configuration options are used to control the features that are
+represented by certain segments of code. For example, in
+Figure~\ref{example1}, the feature represented by the segment of code
+\texttt{X} (feature \texttt{X}) is enabled if the value of
+the configuration option \texttt{CONFIG\_IRQ\_DOMAIN} is \texttt{true},
+whereas feature \texttt{Y} is enabled if both \texttt{CONFIG\_OF\_IRQ} and \texttt{CONFIG\_\-TWL4030\_CORE} are \texttt{true}.
+
+\begin{Definition}{({\bf Feature}).}
+In a configurable system, a feature $f$ is implemented by applying
+program operations on a set of program entities, whose
+presence/absence is controlled by certain configuration options.
+%
+%In the code, a feature is controlled by certain configuration options.
+%
+We denote it by $f \sim OP \times \rho$ where $OP$ is the set of
+program operations and $\rho$ is the set of program entities.
+\end{Definition}
+
+A special case of features is that $f$ is \textit{the core feature}
+($F$), $A \cup B \cup \Gamma \cup \Delta=\rho$, where $A, B, \Gamma,
+\Delta$ are the sets of program entities that are declared, assigned,
+used and destructed in \textit{the core system}. $F$ is not controlled
+by any configuration option.
+
+%In fact, two different features might have similar these attributes.
+
+% argument on feature interactions via program entities
+
+%\vspace{0.03in}
+
+%\subsection{Feature Interaction}
+
+\noindent {\bf Feature Interaction.}
+In a configurable system, a feature can influence or modify (often
+called \textit{interact} with) the functions offered by other
+features through shared program entities that are used to implement
+the features. For example, features \texttt{X}, \texttt{K} and \texttt{Z} 
+interact with one another via the variables \texttt{GLOBAL.irq\_domain\_} \texttt{simple\_ops} and \texttt{twl\_probe.temp}.
+%
+The manners the features interacting with each other depend how the
+shared program entities are operated. For example, feature \texttt{Y}
+\textit{assigns} \texttt{\&irq\_domain\_simple\_ops} to \texttt{ops}
+and feature \texttt{K} \textit{uses} that variable (line 22). If no
+assignment was done in \texttt{Y}, the dereferencing in \texttt{K}
+would be invalid, causing a bug.
+
+%tien
+
+We present only on the interactions between pairs of features because
+the interactions between more than two features can be modeled as the
+operations on the shared variables between pairs of features.  To
+proof this statement we assume that there exists an interaction among
+$m > 2$ features. For simplicity, we consider the case of $m=3$, and
+the interaction among $f_1\sim OP \times \rho_1, f_2\sim OP \times
+\rho_2$ and $f_3\sim OP \times \rho_3$. There are two cases of this
+interaction. First, there exists an entity that shared by all 3
+features, $\rho_1 \cap \rho_2 \cap \rho_3 = \omega \neq \emptyset$. In
+this case, since $\rho_1 \cap \rho_2 \supset \omega$ and $\rho_2
+\cap \rho_3 \supset \omega$, identifying interactions between pairs
+directly captures the interaction among 3 features. The second case is
+that $\rho_1 \cap \rho_2 = \omega_1$, $\rho_2 \cap \rho_3 = \omega_2$
+and $\omega_1 \cap \omega_2 = \emptyset$. Meanwhile, $f_3$ is
+influenced by $f_1$ (because the roles of $f_1$ and $f_3$
+  features in this case are equal). This leads to that there exist
+entities: $e_1 \in \omega_1, e_2 \in \omega_2$, such that $e_2 =
+p(e_1)$, where $p$ is a value propagation function. This means the
+value of $e_1$ is propagated to $e_2$, and that influences
+$f_3$. Hence, the interaction among 3 features is still captured by
+determining interactions between pairs of features.
+
+For instance, the interaction among features \texttt{X}, \texttt{K} and \texttt{Z} can be broken
+down into the shared program entities between two pairs of features as
+follows: (\texttt{X}, \texttt{K}) via the variable \texttt{GLOBAL.irq\_domain\_\-simple\_ops}, and
+(\texttt{K}, \texttt{Z}) via the variable \texttt{twl\_probe.temp}.
+%
+%Detecting feature interactions related 3rd-party features is beyond the scope of this work.
+%
+%
+Thus, our solution can still model the interactions with more than two
+features via the operations on their shared program entities.
+%
+From now on, we refer to a feature interaction as an
+interaction determined via the shared program entities between
+a pair of features.
+
+%The manners that pairs of features interact with each other depend how
+%they operate on the shared program entities. For example, feature $Y$
+%\textit{assgigns} \texttt{\$irq\_domain\_simple\_ops} to \texttt{ops}
+%and feature $K$ \textit{uses} that variable (line 25).
+
+We focus on the feature interaction through the shared
+program entities. The feature interactions when the variables are
+associated with the external data such as when they interfere with
+each other's behaviors on files or databases are beyond the scope of
+our static analysis-based solution. Similarly, we will not detect the
+interactions through pointers or arrays in this work.  As a
+consequence, if both features {\em use} (refer to) a program entity,
+they will not change the program's state. Thus, there is no
+interaction between two features if they only use shared functions and
+variables.
+
+%Note that a program entity is not considered as aconnection between features if these features only \textit{use} the entity. For example, \texttt{of\_platform\_populate} is not considered as a connecting entity between $K$ and $Z$ because this function is only used in these features. In a program, \textit{using} variables that changes the state of the program only when variables associate with external data such files, databases or are arrays or pointers. Evaluating the suspiciousness related to bugs on external data, array or pointer is beyond the scope of this work. Thus, there is no interaction between features if they only use shared functions and variables.
+%
+
+The interactions between two features $f_1 \sim OP \times \rho_1$, and
+$f_2 \sim OP \times \rho_2$ with $\rho_1 \cap \rho_2 \neq \emptyset$,
+can be categorized into nine following kinds of interactions (the
+\textit{use-use} case is eliminated):
+
+\begin{itemize}[leftmargin=4mm]
+
+\item $\exists e \in \rho_1 \cap \rho_2$, $e$ is declared in both $f_1$ and $f_2$ (\textit{declare-declare})
+
+\item $\exists e \in \rho_1 \cap \rho_2$, $e$ is declared in $f_1$ and then assigned in $f_2$ (\textit{declare-assign})
+
+\item $\exists e \in \rho_1 \cap \rho_2$, $e$ is declared in $f_1$ and used in $f_2$ (\textit{declare-use})
+
+\item $\exists e \in \rho_1 \cap \rho_2$, $e$ is declared in $f_1$, and destructed in $f_2$ (\textit{declare-destruct})
+
+\item $\exists e \in \rho_1 \cap \rho_2$, $e$ is assigned in both $f_1$ and $f_2$ (\textit{assign-assign})
+
+\item $\exists e \in \rho_1 \cap \rho_2$, $e$ is assigned in $f_1$ and used in $f_2$ (\textit{assign-use})
+
+\item $\exists e \in \rho_1 \cap \rho_2$, $e$ is assign in $f_1$ and destructed in $f_2$ (\textit{assign-destruct})
+
+\item $\exists e \in \rho_1 \cap \rho_2$, $e$ is used in $f_1$ and destructed in $f_2$ (\textit{use-destruct})
+
+\item $\exists e \in \rho_1 \cap \rho_2$, the entity is destructed in both $f_1$ and $f_2$ (\textit{destruct-destruct})
+
+
+\end{itemize}
+
+
+\noindent {\bf Feature Interaction Detection.} In a configurable
+system, features (except \textit{the features} in the core of the
+system) are controlled by certain configuration options. Thus, if
+there exists an interaction among features, the interaction will
+be:
+
+\begin{itemize}[leftmargin=4mm]
+
+\item \textit{declare-declare}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\alpha(o_1, v_1) \cap \alpha(o_2, v_2) \neq \emptyset$
+
+\item \textit{declare-assign}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\alpha(o_1, v_1) \cap \beta(o_2, v_2) \neq \emptyset$
+
+\item \textit{declare-use}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\alpha(o_1, v_1) \cap \gamma(o_2, v_2) \neq \emptyset$,
+
+\item \textit{declare-destruct}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\alpha(o_1, v_1) \cap \delta(o_2, v_2) \neq \emptyset$
+
+\item \textit{assign-assign}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\beta(o_1, v_1) \cap \beta(o_2, v_2) \neq \emptyset$
+
+\item \textit{assign-use}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\beta(o_1, v_1) \cap \gamma(o_2, v_2) \neq \emptyset$
+
+\item \textit{assign-destruct}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\beta(o_1, v_1) \cap \delta(o_2, v_2) \neq \emptyset$
+
+\item \textit{use-destruct}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\gamma(o_1, v_1) \cap \delta(o_2, v_2) \neq \emptyset$
+
+\item \textit{destruct-destruct}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\delta(o_1, v_1) \cap \delta(o_2, v_2) \neq \emptyset$
+
+\end{itemize}

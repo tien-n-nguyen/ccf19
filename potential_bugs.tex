@@ -1,0 +1,21 @@
+\begin{table*}[!h]
+\centering
+\caption{Different kinds of feature-interaction defects}
+\label{bugtypes}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+&Kind of interaction & Condition & Suspicious selection & Potential violation \\ \hline
+
+1&\textit{declare-declare}&$\alpha(o_1, v_1) \cap \alpha(o_2, v_2) \neq \emptyset$ &$o_1=v_1, o_2=v_2$&Declaration duplication\\ \hline
+%2&\textit{declare-assign}&$\alpha(o_1, v_1) \cap \beta(o_2, v_2) \neq \emptyset$&$o_1=v'_1, o_2=v_2$&Assignment without declaration\\ \hline
+2&\textit{declare-use}&$\alpha(o_1, v_1) \cap \gamma(o_2, v_2) \neq \emptyset$&$o_1=v'_1, o_2=v_2$&Use without declaration\\ \hline
+3&\textit{declare-use}&$\alpha(o_1, v_1) \cap \gamma(o_2, v_2) \neq \emptyset$&$o_1=v_1, o_2=v'_2$&Unused variables/functions\\ \hline
+4&\textit{declare-destruct}&$\alpha(o_1, v_1) \cap \delta(o_2, v_2) \neq \emptyset$ &$o_1=v'_1, o_2=v_2$&Destruction without declaration\\ \hline
+5&\textit{declare-assign}&$\beta(o_1, v_1) \cap \beta(o_2, v_2) \neq \emptyset$&$o_1=v_1, o_2=v_2$&Assignment without declaration\\ \hline
+6&\textit{assign-use}&$\beta(o_1, v_1) \cap \gamma(o_2, v_2) \neq \emptyset$&$o_1=v'_1, o_2=v_2$&Use without assignment\\ \hline
+7&\textit{assign-destruct}&$\beta(o_1, v_1) \cap \delta(o_2, v_2) \neq \emptyset$&$o_1=v'_1, o_2=v_2$&Destruction without definition\\ \hline
+8&\textit{assign-destruct}&$\beta(o_1, v_1) \cap \delta(o_2, v_2) \neq \emptyset$&$o_1=v_1, o_2=v'_2$&Memory leak\\ \hline
+9&\textit{destruct-destruct}&$\delta(o_1, v_1) \cap \delta(o_2, v_2) \neq \emptyset$&$o_1=v_1, o_2=v_2$&Destruction duplication\\ \hline
+10&\textit{destruct-use}&$\delta(o_1, v_1) \cap \gamma(o_2, v_2) \neq \emptyset$&$o_1=v_1, o_2=v_2$& Use after destruction\\ \hline
+\end{tabular}
+\end{table*}

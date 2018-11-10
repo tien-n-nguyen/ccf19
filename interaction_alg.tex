@@ -1,0 +1,70 @@
+\begin{algorithm}
+\caption{Feature-Interaction aware Configuration Prioritization Algorithm}	
+ \label{agl1}
+\begin{algorithmic}[1]
+\Procedure {DetectSuspiciousSelections}{$Code$}
+\State $Options = ExtractOptions(Code)$
+\ForAll {$o \in Options$}
+\State $TSelc = CollectProgramEntities(o, T, Code)$
+\State $FSelc = CollectProgramEntities(o, F, Code)$
+\State $Selections.add(TSelc)$
+\State $Selections.add(FSelc)$
+\EndFor
+
+\ForAll {$selc \in Selections$}
+	\ForAll {$other \in Selections$}
+			\If {$ExistInteraction(selc, other)$}
+				\If {$IsSensitiveInteraction(selc, other)$}
+					\State $ss=ExtractSuspiciousSelection(selc, other)$
+					\State $SuspiciousSelections.add(ss)$
+				\EndIf
+			\EndIf
+	\EndFor
+\EndFor
+\EndProcedure
+\Statex
+
+\Procedure {Prioritize}{$Configurations$, $SuspSelections$}
+\ForAll {$c \in Configurations$}
+	\State $SScore = CaculateSuspiciousScore(c, SuspSelections)$
+	\State $SetScore(c, SScore)$
+\EndFor
+\State $OrderBySuspiciousScoreDesc(Configurations)$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+\begin{algorithm}
+\caption{Feature interaction detection}	
+ \label{alg_2}
+\begin{algorithmic}[1]
+\Procedure {DetectInteractionImplementation}{$F1$, $F2$}
+\State $interactionImpl = EmptySet$
+\State $DD = intersection(def(F1), def(F2))$
+\State $DU = intersection(def(F1), use(F2))$
+\State $UD = intersection(use(F1), def(F2))$
+\ForAll {$e \in DD$}
+	\State $def1 = intersection(def(F1), Define(e))$
+	\State $interactionImpl.add(def1)$
+	\State $def2 = intersection(def(F2), Define(e))$
+	\State $interactionImpl.add(def2)$
+\EndFor
+\ForAll {$e \in DU$}
+	\State $def1 = intersection(def(F1), Define(e))$
+	\State $interactionImpl.add(def1)$
+	\State $use2 = intersection(use(F2), Use(e))$
+	\State $interactionImpl.add(use2)$
+\EndFor
+\ForAll {$e \in UD$}
+	\State $use1 = intersection(use(F1), Use(e))$
+	\State $interactionImpl.add(use1)$
+	\State $def2 = intersection(def(F2), Define(e))$
+	\State $interactionImpl.add(def2)$
+\EndFor
+\EndProcedure
+\Statex
+\end{algorithmic}
+\end{algorithm}

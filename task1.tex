@@ -4,15 +4,16 @@
 \subsection{The representation for feature-interaction}
 In a configurable system, a \textit{feature} is an optional
 functionality in addition to a special feature - \textit{the core
-  feature} (i.e., \textit{the base variant}) which is enabled in every variant of the system. Features
-are implemented as statically conditional statements\footnote{For the
-  purpose of localization, we assume that statement is the unit of
-  program that need to be considered in the fault localization
-  problem.} guarded by constraints over feature symbols (e.g.,
+feature} (i.e., \textit{the base variant}) which is enabled in 
+every variant of the system. In C/C++ programs, features are 
+implemented as statically conditional statements\footnote{For 
+the purpose of localization, we assume that statement is the unit 
+of program that need to be considered in the fault localization 
+problem.} guarded by constraints over feature symbols (e.g., 
 \texttt{\#if} macro). In the running example, feature \texttt{LOCKDEP}
 contains the set of statements from line 20 to 27.
 
-\begin{figure}[h]
+\begin{figure}[!h]
 \begin{center}
 \lstinputlisting[captionpos=b, numbers=left, stepnumber=1, frame=single]{example_2.c}
 \caption{A Configuration-dependent Bug in Linux Kernel}
@@ -47,22 +48,6 @@ is controlled by the configuration option \texttt{CONFIG\_LOCKDEP}.
 In a configurable system, the selections of features are used to specify
 particular configurations (variants) of the system.
 %
-%Configuration
-\begin{Definition}{({\bf Configuration}).}
-In a configurable system consisting of the set of features $F$, a 
-configuration $c$ is a particular set of the selections of all 
-features in $F$. We denote $\mathbb{C}$ as the set of all possible 
-configurations of the system.
-\end{Definition}
-%
-In practice, a {\em configuration-dependent} bug can be revealed
-during testing, in which there are configurations failing at least
-one test, while others pass all their tests.
-For example, the bug in Fig.~\ref{example_bug} is revealed only in
-$c_2$ and $c_7$ in which the features \texttt{LOCKDEP},
-\texttt{PPC\_256K\_PAGES}, \texttt{!SLOB}, and \texttt{SLAB} are all
-enabled and \texttt{PPC\_16K\_PAGES} is disabled.
-
 %Entity
 %In a program, we are interested in the program entities and the
 %operations that are performed on them.
@@ -79,8 +64,8 @@ where \texttt{scope} and \texttt{ent\_name} are the scope and the
 name of the program entity respectively. The \textit{scope} and the
 \textit{name} of an entity are used together as the identity of the
 entity. For example, the code in Fig.~\ref{example_bug} contains
-variables \texttt{GLOBAL.kmalloc\_caches}, \texttt{init\_node
-\_lock\_keys.i}, and function \texttt{GLOBAL.init\_lock\_keys}.
+variables \texttt{GLOBAL.kmalloc\_caches}, \texttt{init\_node\_lock\_keys.i}, 
+and function \texttt{GLOBAL.init\_lock\_keys}.
 %
 
 %Program Operation
@@ -220,5 +205,10 @@ the interactions among more than two features are still captured.
 \begin{Definition}{({\bf Feature Interaction Implementation}).} The implementation of the interaction between features $f_1$ and $f_2$ are the statements that implement the definitions of the shared entities in $f_1$ and $f_2$ (for def-def interactions) and the uses of the shared entities in $f_1$ and $f_2$ (for def-use interactions).
 \end{Definition}
 \subsection{Feature-interaction detection}
+Not decide yet!
+
+\input{interaction_alg}
+
+
 
 \subsection{The representation and detection for feature-interaction relevant to pointers and external data}

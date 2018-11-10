@@ -1,0 +1,44 @@
+\begin{algorithm}
+\caption{\textbf{SSSS} Suspicious partial configuration detection algorithm for single bug}	
+ \label{alg_1}
+\begin{algorithmic}[1]
+\Procedure {DetectSPC}{$CP$, $CF$}
+\State $SPC = EmptySet$
+\State $examinedSels = commonSubSet(CF)$
+%\State $unrelatedFeatures = FindUnrelatedFeatures(CF)$ 
+
+%\ForAll {$f \in unrelatedFeatures$}
+%	\State $enabledSel = enable(f)$
+%	\State $disabledSel = disable(f)$
+%	\State $remove(consideredSels, enabledSel)$
+%	\State $remove(consideredSels, disabledSel)$
+%\EndFor
+
+\ForAll {$s \in examinedSels$}
+	\State $subset = examinedSels.subtract(s)$
+	\ForAll {$passedConfig \in CP$}
+		\If {$passedConfig.containsAll(subset)$}
+			\State $SPC.add(s)$
+			\State $break$
+		\EndIf
+	\EndFor
+\EndFor
+\EndProcedure
+\Statex
+
+%\Procedure {FindUnrelatedFeatures}{$CF$}
+%\State $unrelatedFeatures = EmptySet$
+%
+%\ForAll {$f \in AllFeatures$}
+%	\State $enabledSel = enable(f)$
+%	\State $disabledSel = disable(f)$
+%	\State $config = findContainingConfig(enabledSel, CF)$
+%	\State $other = findContainingConfig(disabledSel, CF)$
+%	\If {$config \neq NULL \wedge other \neq NULL$ }
+%		\State $addToSet(f, unrelatedFeatures)$
+%	\EndIf
+%\EndFor
+%\EndProcedure
+%\Statex
+\end{algorithmic}
+\end{algorithm}
