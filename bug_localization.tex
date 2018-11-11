@@ -1,3 +1,23 @@
+\textbf{SON: INTRO THE PROBLEM}
+
+\textbf{Overview}
+Based on these observations, we propose a novel approach for
+configuration-dependent fault localization. The input includes 
+the buggy configurable code, the~test result of each
+configuration, and the trace of the executed~statements that are
+recorded for each test in each configuration, e.g., the trace of the
+executed statements in $c_7$ is shown in Fig.~\ref{execution_trace}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{flowchart}
+\label{workflow}
+\caption{Approach overview}
+\end{figure}
+%
+In general, to localize a configuration-dependent bug, our algorithm
+works in three steps as shown in Fig.~\ref{workflow}.
+
 %
 In preprocessor-based program families \cite{kastner2012virtual}, a 
 feature selection is controlled by one or more \textit{configuration 
@@ -15,26 +35,9 @@ features in $F$. We denote $\mathbb{C}$ as the set of all possible
 configurations of the system.
 \end{Definition}
 
-%In practice, a 
-%configuration-dependent bug can be revealed during testing process, when 
-%there are configurations failing at least one test, while others pass 
-%all their test cases. Even after the system have been released, many 
-%configuration-dependent bugs are newly reported by the end-users when they execute the configurations in their own environments.
-%
-
 In practice, a {\em configuration-dependent} bug can be revealed
 during testing, in which there are configurations failing at least
 one test, while others pass all their tests.
-% Moved to intro
-%Even after the system have been released, many configuration-dependent
-%bugs are newly reported by the end-users when they execute the
-%configurations in their own environments.
-%
-%For example, the bug in Fig.~\ref{example_bug} is revealed only in
-%$c_2$ and $c_7$ in which the features \texttt{LOCKDEP},
-%\texttt{PPC\_256K\_PAGES}, \texttt{\!SLOB}, and \texttt{SLAB} are all
-%enabled and \texttt{PPC\_16K\_PAGES} is disabled.
-%
 %
 For example, the bug in Fig.~\ref{example_bug} is revealed only in
 $c_2$ and $c_7$ in which the features \texttt{LOCKDEP},
@@ -66,3 +69,64 @@ the fault(s).
 
 
 \input{pc_detection}
+
+
+\subsubsection{Suspicious Statement Detection}
+\label{statement_detection_section}
+
+For a configuration-dependent bug visible by a $SPC$, not only the 
+statements that implement the interactions of the features in the 
+$SPC$ are likely to be buggy, the executed statements in the failed 
+configurations that have dependency impact on them could be suspicious 
+as well ({\bf O3} and {\bf O4}).
+%considered to be suspicious.
+%
+
+Given a $SPC$ of a particular bug, let $ES$ be the set of the statements
+that implement the interactions between the enabled features ($f_E$s)
+in $SPC$; $DS$ be the set of statements that implement the
+interactions of $f_E$s with the disabled features ($f_D$s) in $SPC$.
+%
+In case that there is no $f_D$ ($DS=\emptyset$), if a statement $smt$
+has impact on any statement in $ES$, it is considered as
+suspicious. However, in the case that $DS \neq \emptyset$, $smt$ is
+considered to be faulty only if $smt$ also has dependency impact on at
+least one statement in $DS$. Indeed, because if $smt$ has no
+dependency impact on any interaction between $f_E$s and $f_D$s, the
+impact of $smt$ is not hidden by any $f_D$ when the features in $f_D$s
+are enabled ({\bf O3}).
+
+For the running example, the statements that implement the
+interactions of \texttt{SLAB}, \texttt{PPC\_256K\_PAGES},
+\texttt{LOCKDEP}, and \texttt{\!SLOB} whose enabling make the bug
+visible ($ES$) are the statements at lines 4, 11--12, 16, 22, and
+24. These statements are also executed in $c_7$, a failed
+configuration, and obviously have impact on the interaction between
+features in $ES$.
+%
+Additionally, another statement that has impact on the interaction is
+line 1, and it is also suspicious. However, only the statements at
+line 1, 11--12, and 22 have impact on the interactions between
+\texttt{PPC\_16K\_PAGES} and the features in $ES$. As a result, for
+the bug shown in Fig.~\ref{example_bug}, they are the only suspicious
+statements.
+
+\textbf{Suspicious statements ranking.} To rank these suspicious
+statements, we analyze the execution information in the testing phase
+to assign a suspiciousness score to each of these statements. This
+could be realized using spectrum-based
+techniques~\cite{wong2009survey}. We use a spectrum-based
+tool to access the suspiciousness for only the set of detected
+suspicious statements, rather than using them for all executed
+statements. Take Tarantula~\cite{tarantula} as an example, the
+suspiciousness score of a suspicious statement $stm$:
+$$
+Suspiciousness(stm) = \frac{N_{CF}/N_F}{N_{CF}/N_F+N_{CS}/N_S}
+$$
+where:
+\begin{itemize}
+\item $N_F$ total number of failed test cases
+\item $N_S$ total number of successful test cases
+\item $N_{CF}$ number of failed test cases that cover $stm$
+\item $N_{CS}$ number of successful test cases that cover $stm$
+\end{itemize}

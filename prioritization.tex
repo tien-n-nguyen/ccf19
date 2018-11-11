@@ -1,4 +1,5 @@
-%Son, optional segment of code --> feature
+\textbf{SON: INTRO THE PROBLEM}
+
 In practice, a configurable system usually provides a large number of
 {\bf configuration options} to configure several optional segments of code
 to be present or absent, in addition to
@@ -14,6 +15,15 @@ configuration option is either \texttt{true(T)} or
 \texttt{false(F)} (We can consider the entire conditional
   expressions of non-boolean options as boolean ones, e.g.,
   \texttt{CONFIG\_A>10} as \texttt{CONFIG\_A>10=T/F}).
+
+%Code in example_src.c
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{example_bk.png}
+\caption{A simplified buggy version of Linux kernel}
+\label{example1}
+\end{figure}
+
 
 \begin{Definition}{({\bf Configuration Option}).}
 A configuration option ({\em option} for short) is an element that is used
@@ -38,7 +48,7 @@ functions from $O\times V$ to $2^P$, where $O$ is the set of
 configuration options, $V=\{\texttt{T, F}\}$, and $P$ is the set of program
 entities used in the code of the configurable system. We define four selection functions:
 
-\begin{itemize}[leftmargin=4mm]
+\begin{itemize}
 
 \item $\alpha: O \times V \to 2^P$, $\alpha(o, v) = D$, where $o \in O, v \in \{\texttt{T, F}\}$, and $D$ is the set of entities potentially {\bf declared} if $o = v$.
 
@@ -76,109 +86,13 @@ Figure~\ref{example1}, the feature represented by the segment of code
 the configuration option \texttt{CONFIG\_IRQ\_DOMAIN} is \texttt{true},
 whereas feature \texttt{Y} is enabled if both \texttt{CONFIG\_OF\_IRQ} and \texttt{CONFIG\_\-TWL4030\_CORE} are \texttt{true}.
 
-\begin{Definition}{({\bf Feature}).}
-In a configurable system, a feature $f$ is implemented by applying
-program operations on a set of program entities, whose
-presence/absence is controlled by certain configuration options.
-%
-%In the code, a feature is controlled by certain configuration options.
-%
-We denote it by $f \sim OP \times \rho$ where $OP$ is the set of
-program operations and $\rho$ is the set of program entities.
-\end{Definition}
-
-A special case of features is that $f$ is \textit{the core feature}
-($F$), $A \cup B \cup \Gamma \cup \Delta=\rho$, where $A, B, \Gamma,
-\Delta$ are the sets of program entities that are declared, assigned,
-used and destructed in \textit{the core system}. $F$ is not controlled
-by any configuration option.
-
-%In fact, two different features might have similar these attributes.
-
-% argument on feature interactions via program entities
-
-%\vspace{0.03in}
-
-%\subsection{Feature Interaction}
-
-\noindent {\bf Feature Interaction.}
-In a configurable system, a feature can influence or modify (often
-called \textit{interact} with) the functions offered by other
-features through shared program entities that are used to implement
-the features. For example, features \texttt{X}, \texttt{K} and \texttt{Z} 
-interact with one another via the variables \texttt{GLOBAL.irq\_domain\_} \texttt{simple\_ops} and \texttt{twl\_probe.temp}.
-%
-The manners the features interacting with each other depend how the
-shared program entities are operated. For example, feature \texttt{Y}
-\textit{assigns} \texttt{\&irq\_domain\_simple\_ops} to \texttt{ops}
-and feature \texttt{K} \textit{uses} that variable (line 22). If no
-assignment was done in \texttt{Y}, the dereferencing in \texttt{K}
-would be invalid, causing a bug.
-
-%tien
-
-We present only on the interactions between pairs of features because
-the interactions between more than two features can be modeled as the
-operations on the shared variables between pairs of features.  To
-proof this statement we assume that there exists an interaction among
-$m > 2$ features. For simplicity, we consider the case of $m=3$, and
-the interaction among $f_1\sim OP \times \rho_1, f_2\sim OP \times
-\rho_2$ and $f_3\sim OP \times \rho_3$. There are two cases of this
-interaction. First, there exists an entity that shared by all 3
-features, $\rho_1 \cap \rho_2 \cap \rho_3 = \omega \neq \emptyset$. In
-this case, since $\rho_1 \cap \rho_2 \supset \omega$ and $\rho_2
-\cap \rho_3 \supset \omega$, identifying interactions between pairs
-directly captures the interaction among 3 features. The second case is
-that $\rho_1 \cap \rho_2 = \omega_1$, $\rho_2 \cap \rho_3 = \omega_2$
-and $\omega_1 \cap \omega_2 = \emptyset$. Meanwhile, $f_3$ is
-influenced by $f_1$ (because the roles of $f_1$ and $f_3$
-  features in this case are equal). This leads to that there exist
-entities: $e_1 \in \omega_1, e_2 \in \omega_2$, such that $e_2 =
-p(e_1)$, where $p$ is a value propagation function. This means the
-value of $e_1$ is propagated to $e_2$, and that influences
-$f_3$. Hence, the interaction among 3 features is still captured by
-determining interactions between pairs of features.
-
-For instance, the interaction among features \texttt{X}, \texttt{K} and \texttt{Z} can be broken
-down into the shared program entities between two pairs of features as
-follows: (\texttt{X}, \texttt{K}) via the variable \texttt{GLOBAL.irq\_domain\_\-simple\_ops}, and
-(\texttt{K}, \texttt{Z}) via the variable \texttt{twl\_probe.temp}.
-%
-%Detecting feature interactions related 3rd-party features is beyond the scope of this work.
-%
-%
-Thus, our solution can still model the interactions with more than two
-features via the operations on their shared program entities.
-%
-From now on, we refer to a feature interaction as an
-interaction determined via the shared program entities between
-a pair of features.
-
-%The manners that pairs of features interact with each other depend how
-%they operate on the shared program entities. For example, feature $Y$
-%\textit{assgigns} \texttt{\$irq\_domain\_simple\_ops} to \texttt{ops}
-%and feature $K$ \textit{uses} that variable (line 25).
-
-We focus on the feature interaction through the shared
-program entities. The feature interactions when the variables are
-associated with the external data such as when they interfere with
-each other's behaviors on files or databases are beyond the scope of
-our static analysis-based solution. Similarly, we will not detect the
-interactions through pointers or arrays in this work.  As a
-consequence, if both features {\em use} (refer to) a program entity,
-they will not change the program's state. Thus, there is no
-interaction between two features if they only use shared functions and
-variables.
-
-%Note that a program entity is not considered as aconnection between features if these features only \textit{use} the entity. For example, \texttt{of\_platform\_populate} is not considered as a connecting entity between $K$ and $Z$ because this function is only used in these features. In a program, \textit{using} variables that changes the state of the program only when variables associate with external data such files, databases or are arrays or pointers. Evaluating the suspiciousness related to bugs on external data, array or pointer is beyond the scope of this work. Thus, there is no interaction between features if they only use shared functions and variables.
-%
 
 The interactions between two features $f_1 \sim OP \times \rho_1$, and
 $f_2 \sim OP \times \rho_2$ with $\rho_1 \cap \rho_2 \neq \emptyset$,
 can be categorized into nine following kinds of interactions (the
 \textit{use-use} case is eliminated):
 
-\begin{itemize}[leftmargin=4mm]
+\begin{itemize}
 
 \item $\exists e \in \rho_1 \cap \rho_2$, $e$ is declared in both $f_1$ and $f_2$ (\textit{declare-declare})
 
