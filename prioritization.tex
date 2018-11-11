@@ -143,3 +143,50 @@ be:
 \item \textit{destruct-destruct}, there exist two options $o_1, o_2$ and their values $v_1, v_2$, such that $\delta(o_1, v_1) \cap \delta(o_2, v_2) \neq \emptyset$
 
 \end{itemize}
+
+\input{potential_bugs}
+
+
+\subsubsection{Configuration Prioritization Algorithm}
+
+In general, to prioritize a given set of configurations under test,
+our algorithm assigns a suspicious score to a configuration. The
+score is determined via the number of the potential
+feature-interaction bugs in different kinds that a variant
+corresponding to that configuration might have.
+
+\input{prioritization_alg}
+
+Feature-interaction bugs can be induced by any kinds of
+interaction. Table~\ref{bugtypes} shows 10 different kinds of
+feature-interaction bugs that are potentially caused by the respective
+kinds of feature interactions listed in
+Section~\ref{sec:formulation}. The interactions in
+Table~\ref{bugtypes} are called \textit{sensitive interactions} with
+their \textit{suspicious selection} of options.
+%which could potentially lead to the problems for the configurations
+%containing it as listed in Section~3.
+A configuration containing a suspicious selection potentially has the
+corresponding violation.
+
+The listing~\ref{agl1} shows the pseudo-code of the approach, our
+feature-interaction aware configuration prioritization
+algorithm. Given a configurable system under test, we first extract
+the set of options used in the system. Then, for each selection $v$ of
+each option $o$, the sets $\alpha(o, v), \beta(o, v), \gamma(o,v)$,
+and $\delta(o,v)$ are computed via the function
+$CollectProgramEntities$ (lines 4--5). To identify these sets of
+program entities, our algorithm analyzes the code by using
+\textit{TypeChef}, a variability-aware
+parser~\cite{Kenner:2010:TTT:1868688.1868693}. After that, for each
+pair of option selections, it detects the potential interactions among
+the features and checks whether the interactions are sensitive as
+described in Table~\ref{bugtypes}.
+%
+Sensitive interactions are used to specify suspicious selections. This
+information is used to compute suspicious score for each configuration
+selected to be tested (line 16). This score is the number of
+suspicious selections contained by a configuration, and equal to the
+number of potential bugs that  the corresponding variant might
+have. Finally, the configurations are sorted descendingly by
+their suspicious~scores.
